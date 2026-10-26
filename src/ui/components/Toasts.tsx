@@ -41,7 +41,7 @@ export function Toasts() {
       role="status"
       aria-live="polite"
       className="pointer-events-none fixed inset-x-0 z-40 flex flex-col items-center gap-2 px-4"
-      style={{ bottom: 'calc(5.5rem + var(--safe-bottom))' }}
+      style={{ bottom: 'calc(var(--toast-offset, 5.5rem) + var(--safe-bottom))' }}
     >
       {toasts.map((t) => (
         <div key={t.id} className="w-full max-w-md">

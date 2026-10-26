@@ -56,15 +56,17 @@ export function StatsPanel() {
         </p>
       )}
 
-      <dl className="grid grid-cols-2 gap-3">
+      <dl className="stat-tiles grid grid-cols-2 gap-3">
         <Tile icon="timer" label="Focus this week" value={formatDuration(data.weekMs)} />
         <Tile icon="pomodoro" label="Sessions this week" value={String(data.weekSessions)} />
         <Tile icon="chart" label="Focus this month" value={formatDuration(data.monthMs)} />
         <Tile icon="check" label="Tasks done this week" value={String(data.weekTasks)} />
       </dl>
 
-      <WeekChart days={data.week} />
-      <Heatmap days={data.heat} active28={data.active28} />
+      <div className="two-up grid gap-5">
+        <WeekChart days={data.week} />
+        <Heatmap days={data.heat} active28={data.active28} />
+      </div>
 
       <div className="rounded-2xl bg-surface-2 p-4">
         <h3 className="text-lg font-bold">Last 30 days</h3>

@@ -39,7 +39,8 @@ export function GardenPanel() {
           : garden.untilNextSegment > 0
             ? `${garden.untilNextSegment} more session${garden.untilNextSegment === 1 ? '' : 's'} until the bamboo grows again.`
             : 'Your grove is fully grown. Beautiful work.'}
-        {garden.next && ` Next unlock: ${garden.next.label} at ${garden.next.at} sessions.`}
+        {garden.next &&
+          ` Next unlock: ${garden.next.label} at ${garden.next.at} session${garden.next.at === 1 ? '' : 's'}.`}
       </p>
 
       <div>

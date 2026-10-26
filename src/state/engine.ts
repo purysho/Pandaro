@@ -22,7 +22,7 @@ export function applyTheme(): void {
   root.style.colorScheme = resolved;
   const bg = resolved === 'dark' ? '#161816' : '#F7F3EA';
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg);
-  void setNativeChrome(resolved === 'dark', bg);
+  void setNativeChrome(resolved === 'dark');
 }
 
 /** Load persisted data and start the clock. Returns a cleanup function. */

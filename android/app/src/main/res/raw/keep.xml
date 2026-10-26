@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Resources loaded by name at runtime (Capacitor config, splash and notification plugins). -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_pandaro,@drawable/splash,@xml/config,@layout/activity_main,@string/package_name,@string/custom_url_scheme" />

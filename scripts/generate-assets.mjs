@@ -112,6 +112,9 @@ const SOURCES = {
   ),
 };
 
+// Circular launcher icon for launchers that request a round icon.
+const ROUND_ICON = svg(`<circle cx="512" cy="512" r="512" fill="${C.forest}"/>${face(0.74)}`);
+
 const FAVICON = svg(
   `<rect width="1024" height="1024" rx="300" fill="${C.forest}"/>${face(0.86, { ring: false })}`,
 );
@@ -162,7 +165,7 @@ async function androidAssets() {
   for (const [d, k] of Object.entries(densities)) {
     const dir = join(res, `mipmap-${d}`);
     await png(SOURCES['icon.svg'], join(dir, 'ic_launcher.png'), Math.round(48 * k));
-    await png(SOURCES['icon-maskable.svg'], join(dir, 'ic_launcher_round.png'), Math.round(48 * k));
+    await png(ROUND_ICON, join(dir, 'ic_launcher_round.png'), Math.round(48 * k));
     await png(
       SOURCES['adaptive-foreground.svg'],
       join(dir, 'ic_launcher_foreground.png'),
@@ -196,10 +199,10 @@ async function androidAssets() {
       await rm(join(res, entry, 'splash.png'));
     }
   }
-  await png(SOURCES['splash.svg'], join(res, 'drawable', 'splash.png'), 1280, 1280, C.ivory);
+  await png(SOURCES['splash.svg'], join(res, 'drawable-nodpi', 'splash.png'), 1280, 1280, C.ivory);
   await png(
     SOURCES['splash-dark.svg'],
-    join(res, 'drawable-night', 'splash.png'),
+    join(res, 'drawable-night-nodpi', 'splash.png'),
     1280,
     1280,
     C.charcoal,

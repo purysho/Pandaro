@@ -139,12 +139,12 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
     <section
       aria-label="Timer"
       data-kind={timer.kind}
-      className="card flex flex-col items-center gap-4 px-5 pt-4 pb-5 sm:px-8"
+      className="timer-card card flex flex-col items-center gap-4 px-5 pt-4 pb-5 sm:px-8"
     >
       <div
         role="tablist"
         aria-label="Session type"
-        className="flex w-full max-w-sm rounded-full bg-surface-2 p-1"
+        className="timer-tabs flex w-full max-w-sm rounded-full bg-surface-2 p-1"
       >
         {KINDS.map((kind) => (
           <button
@@ -165,7 +165,7 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
       {timer.notice && (
         <div
           role="status"
-          className="flex w-full items-center gap-3 rounded-2xl bg-accent-soft px-4 py-2 text-sm"
+          className="timer-notice flex w-full items-center gap-3 rounded-2xl bg-accent-soft px-4 py-2 text-sm"
         >
           <Icon name="info" size={18} />
           <span className="flex-1">
@@ -178,7 +178,7 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
         </div>
       )}
 
-      <div className={`w-full ${compact ? 'max-w-[300px]' : 'max-w-[340px]'}`}>
+      <div className={`timer-ring w-full ${compact ? 'max-w-[300px]' : 'max-w-[340px]'}`}>
         <ProgressRing progress={progress}>
           <button
             type="button"
@@ -200,7 +200,7 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
             role="timer"
             aria-live="off"
             aria-label={`${KIND_LABEL[timer.kind]}, ${spokenRemaining(spokenMinute * 60_000)}`}
-            className="tabular font-display text-[clamp(3rem,13vw,4.25rem)] leading-none font-bold"
+            className="timer-digits tabular font-display leading-none font-bold"
           >
             {formatClock(remaining)}
           </div>
@@ -210,72 +210,74 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
         </ProgressRing>
       </div>
 
-      <SessionDots
-        completed={Math.min(timer.completedInCycle, settings.cycleLength)}
-        total={settings.cycleLength}
-        kind={timer.kind}
-      />
+      <div className="timer-side flex w-full flex-col items-center gap-4">
+        <SessionDots
+          completed={Math.min(timer.completedInCycle, settings.cycleLength)}
+          total={settings.cycleLength}
+          kind={timer.kind}
+        />
 
-      <div className="flex items-center gap-5">
-        <button
-          type="button"
-          className="icon-btn border-[1.5px] border-line"
-          onClick={actions.reset}
-          aria-label="Reset session"
-          title="Reset (R)"
-        >
-          <Icon name="reset" />
-        </button>
-        <button
-          type="button"
-          onClick={actions.toggle}
-          className="btn btn-primary size-[4.5rem] rounded-full p-0 shadow-lg"
-          aria-label={running ? 'Pause' : timer.segments.length > 0 ? 'Resume' : 'Start'}
-          title={running ? 'Pause (Space)' : 'Start (Space)'}
-        >
-          <Icon name={running ? 'pause' : 'play'} size={30} />
-        </button>
-        <button
-          type="button"
-          className="icon-btn border-[1.5px] border-line"
-          onClick={actions.skip}
-          aria-label="Skip to next session"
-          title="Skip (S)"
-        >
-          <Icon name="skip" />
-        </button>
-      </div>
-
-      <div className="flex w-full flex-col items-center gap-1 text-sm text-muted">
-        {activeTask ? (
+        <div className="flex items-center gap-5">
           <button
             type="button"
-            className="flex max-w-full items-center gap-2 rounded-full bg-accent-soft px-3 py-1.5 font-semibold text-ink"
-            onClick={() => setView('tasks')}
+            className="icon-btn border-[1.5px] border-line"
+            onClick={actions.reset}
+            aria-label="Reset session"
+            title="Reset (R)"
           >
-            <Icon name="target" size={16} />
-            <span className="truncate">{activeTask.title}</span>
-            <span className="tabular text-muted">
-              {activeTask.completedPomodoros}
-              {activeTask.estimate ? `/${activeTask.estimate}` : ''}
-            </span>
+            <Icon name="reset" />
           </button>
-        ) : (
           <button
             type="button"
-            className="underline-offset-2 hover:underline"
-            onClick={() => setView('tasks')}
+            onClick={actions.toggle}
+            className="btn btn-primary size-[4.5rem] rounded-full p-0 shadow-lg"
+            aria-label={running ? 'Pause' : timer.segments.length > 0 ? 'Resume' : 'Start'}
+            title={running ? 'Pause (Space)' : 'Start (Space)'}
           >
-            Choose a task to focus on
+            <Icon name={running ? 'pause' : 'play'} size={30} />
           </button>
-        )}
-        <p>
-          Next: {KIND_LABEL[nextKind]} · {nextMinutes} min
-          {settings.autoProgress ? '' : ' (manual)'}
-        </p>
-      </div>
+          <button
+            type="button"
+            className="icon-btn border-[1.5px] border-line"
+            onClick={actions.skip}
+            aria-label="Skip to next session"
+            title="Skip (S)"
+          >
+            <Icon name="skip" />
+          </button>
+        </div>
 
-      {!(settings.focusMode && running) && <TodayStrip />}
+        <div className="flex w-full flex-col items-center gap-1 text-sm text-muted">
+          {activeTask ? (
+            <button
+              type="button"
+              className="flex max-w-full items-center gap-2 rounded-full bg-accent-soft px-3 py-1.5 font-semibold text-ink"
+              onClick={() => setView('tasks')}
+            >
+              <Icon name="target" size={16} />
+              <span className="truncate">{activeTask.title}</span>
+              <span className="tabular text-muted">
+                {activeTask.completedPomodoros}
+                {activeTask.estimate ? `/${activeTask.estimate}` : ''}
+              </span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="underline-offset-2 hover:underline"
+              onClick={() => setView('tasks')}
+            >
+              Choose a task to focus on
+            </button>
+          )}
+          <p>
+            Next: {KIND_LABEL[nextKind]} · {nextMinutes} min
+            {settings.autoProgress ? '' : ' (manual)'}
+          </p>
+        </div>
+
+        {!(settings.focusMode && running) && <TodayStrip />}
+      </div>
 
       <ConfirmDialog
         open={pendingKind !== null}

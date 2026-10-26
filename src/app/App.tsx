@@ -133,7 +133,7 @@ export function App() {
         {!wide ? (
           // Phones and tablets: one view at a time.
           view === 'timer' || hideSecondary ? (
-            <div className="mx-auto max-w-lg">
+            <div className="timer-wrap mx-auto max-w-lg">
               <TimerPanel />
             </div>
           ) : (

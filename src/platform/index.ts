@@ -55,12 +55,12 @@ export async function hapticTap(strong = false): Promise<void> {
   }
 }
 
-export async function setNativeChrome(dark: boolean, background: string): Promise<void> {
+/** Match status-bar icon colour to the theme (bars are transparent, edge-to-edge). */
+export async function setNativeChrome(dark: boolean): Promise<void> {
   if (!isNative) return;
   try {
     const { StatusBar, Style } = await import('@capacitor/status-bar');
     await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light });
-    if (platformName === 'android') await StatusBar.setBackgroundColor({ color: background });
   } catch {
     // Status bar plugin unavailable.
   }

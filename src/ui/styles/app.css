@@ -43,10 +43,11 @@
   --font-body: 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
   --radius-card: 1.5rem;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
+  /* Capacitor's Android SystemBars injects --safe-area-inset-*; browsers and iOS use env(). */
+  --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
   color-scheme: light;
 }
 
@@ -242,6 +243,49 @@ button:disabled {
   color: var(--ink);
   background: var(--surface);
   border-color: var(--line);
+}
+
+.timer-ring {
+  container-type: inline-size;
+}
+/* Digits scale with the ring so they always fit inside it. */
+.timer-digits {
+  font-size: clamp(2rem, 19cqi, 4.5rem);
+}
+.timer-tabs .chip {
+  white-space: nowrap;
+}
+
+/* Short landscape screens (phones on their side): ring beside the controls. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .timer-wrap {
+    max-width: 46rem;
+  }
+  .timer-card {
+    display: grid;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+    grid-template-areas: 'ring tabs' 'ring notice' 'ring side';
+    align-items: center;
+    column-gap: 2rem;
+  }
+  .timer-tabs {
+    grid-area: tabs;
+    justify-self: center;
+  }
+  .timer-notice {
+    grid-area: notice;
+  }
+  .timer-ring {
+    grid-area: ring;
+    width: min(52dvh, 260px);
+  }
+  .timer-side {
+    grid-area: side;
+    gap: 0.75rem;
+  }
+  .timer-tabs .chip {
+    padding-inline: 0.6rem;
+  }
 }
 
 /* Timer ring */

@@ -79,10 +79,12 @@ export function Panda({ pose, size = '100%', className, title }: PandaProps) {
       aria-hidden={labelled ? undefined : true}
       data-pose={pose}
     >
-      <g className={wrapperClass}>
-        <Body />
-        <Head eyes={eyes} mouthOpen={mouthOpen} />
-        {arms}
+      <g key={pose} className="pose-enter">
+        <g className={wrapperClass}>
+          <Body />
+          <Head eyes={eyes} mouthOpen={mouthOpen} />
+          {arms}
+        </g>
       </g>
       {extras}
     </svg>

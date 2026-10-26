@@ -27,7 +27,7 @@ export function SessionDots({
           <span
             key={i}
             data-state={done ? 'done' : isCurrent ? 'current' : 'todo'}
-            className="grid size-3.5 place-items-center rounded-full border-2 transition-colors"
+            className="session-dot grid size-3.5 place-items-center rounded-full border-2 transition-colors"
             style={{
               borderColor: done || isCurrent ? 'var(--accent)' : 'var(--line)',
               background: done ? 'var(--accent)' : 'transparent',

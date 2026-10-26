@@ -68,7 +68,7 @@ export function GardenScene({
         const x = 20 + ((i * 53) % 330);
         const h = Math.max(1, segments) * seg;
         return (
-          <g key={i}>
+          <g key={i} className="grow-up" style={{ animationDelay: `${i * 70}ms` }}>
             <rect x={x} y={ground - h} width={7} height={h} rx={3.5} fill="var(--bamboo)" />
             {Array.from({ length: Math.max(0, segments - 1) }, (_, j) => (
               <rect

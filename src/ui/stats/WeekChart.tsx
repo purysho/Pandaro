@@ -51,6 +51,8 @@ export function WeekChart({ days }: { days: DaySummary[] }) {
             <g key={d.date}>
               {h > 0 && (
                 <rect
+                  className="grow-up"
+                  style={{ animationDelay: `${i * 40}ms` }}
                   x={x}
                   y={8 + plotH - h}
                   width={barW * 0.6}

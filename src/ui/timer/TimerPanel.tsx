@@ -26,9 +26,12 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
   const setView = useUi((s) => s.setView);
   const [pendingKind, setPendingKind] = useState<SessionKind | null>(null);
   const panda = usePandaPose();
+  const celebration = useUi((s) => s.celebration);
+  const bloom = celebration && now - celebration.at < 1500 ? celebration.nonce : null;
 
   const remaining = remainingAt(timer, now);
   const progress = progressAt(timer, now);
+  const clock = formatClock(remaining);
   const config = toTimerConfig(settings);
   const activeTask = tasks.find((t) => t.id === timer.taskId) ?? null;
   const running = timer.status === 'running';
@@ -42,10 +45,8 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
   const spokenMinute = Math.ceil(remaining / 60_000);
 
   useEffect(() => {
-    document.title = running
-      ? `${formatClock(remaining)} · ${KIND_LABEL[timer.kind]} · Pandaro`
-      : 'Pandaro';
-  }, [running, remaining, timer.kind]);
+    setPageTitle(running ? `${clock} · ${KIND_LABEL[timer.kind]} · Pandaro` : 'Pandaro');
+  }, [running, clock, timer.kind]);
 
   function chooseKind(kind: SessionKind) {
     if (kind === timer.kind && timer.status === 'idle') return;
@@ -97,7 +98,7 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
       )}
 
       <div className={`timer-ring w-full ${compact ? 'max-w-[300px]' : 'max-w-[340px]'}`}>
-        <ProgressRing progress={progress}>
+        <ProgressRing progress={progress} bloom={bloom}>
           <button
             type="button"
             onClick={panda.tap}
@@ -120,7 +121,10 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
             aria-label={`${KIND_LABEL[timer.kind]}, ${spokenRemaining(spokenMinute * 60_000)}`}
             className="timer-digits tabular font-display leading-none font-bold"
           >
-            {formatClock(remaining)}
+            <span key={clock.slice(0, 2)} className="digit-roll">
+              {clock.slice(0, 2)}
+            </span>
+            {clock.slice(2)}
           </div>
           <div className="eyebrow mt-1.5" style={{ color: 'var(--accent)' }}>
             {timer.status === 'paused' ? 'Paused' : KIND_LABEL[timer.kind]}
@@ -152,7 +156,9 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
             aria-label={running ? 'Pause' : timer.segments.length > 0 ? 'Resume' : 'Start'}
             title={running ? 'Pause (Space)' : 'Start (Space)'}
           >
-            <Icon name={running ? 'pause' : 'play'} size={30} />
+            <span key={running ? 'pause' : 'play'} className="icon-swap grid place-items-center">
+              <Icon name={running ? 'pause' : 'play'} size={30} />
+            </span>
           </button>
           <button
             type="button"
@@ -211,4 +217,8 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
       />
     </section>
   );
+}
+
+function setPageTitle(title: string): void {
+  document.title = title;
 }

@@ -465,6 +465,153 @@ button:disabled {
   }
 }
 
+/* ---- Motion system (all disabled by reduced-motion rules below) ---- */
+.view-enter {
+  animation: view-in 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.ring-bloom {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  animation: ring-bloom 1.1s ease-out both;
+}
+@keyframes ring-bloom {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+.session-dot[data-state='done'] {
+  animation: dot-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes dot-pop {
+  0% {
+    transform: scale(0.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.icon-swap {
+  animation: icon-swap 0.22s ease-out both;
+}
+@keyframes icon-swap {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-20deg);
+  }
+}
+.digit-roll {
+  display: inline-block;
+  animation: digit-roll 0.35s ease-out both;
+}
+@keyframes digit-roll {
+  from {
+    opacity: 0;
+    transform: translateY(-0.35em);
+  }
+}
+.pose-enter {
+  animation: fade 0.3s ease-out both;
+}
+.panda-ear {
+  transform-box: fill-box;
+  transform-origin: 50% 90%;
+  animation: ear-twitch 9s ease-in-out infinite;
+}
+.panda-ear:nth-of-type(2) {
+  animation-delay: 4.5s;
+}
+@keyframes ear-twitch {
+  0%,
+  92%,
+  100% {
+    transform: rotate(0);
+  }
+  95% {
+    transform: rotate(-12deg);
+  }
+  97% {
+    transform: rotate(6deg);
+  }
+}
+.panda-pupils {
+  animation: glance 14s ease-in-out infinite;
+}
+@keyframes glance {
+  0%,
+  40%,
+  60%,
+  100% {
+    transform: translateX(0);
+  }
+  45%,
+  55% {
+    transform: translateX(1.6px);
+  }
+}
+.row-enter {
+  animation: row-in 0.3s ease-out both;
+}
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+.check-draw path {
+  stroke-dasharray: 24;
+  animation: check-draw 0.3s ease-out both;
+}
+@keyframes check-draw {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.task-done-bounce {
+  animation: hop 0.4s ease-out 1;
+}
+.grow-up {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: grow-up 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes grow-up {
+  from {
+    transform: scaleY(0);
+  }
+}
+.cell-fade {
+  animation: fade 0.4s ease-out both;
+}
+.unlock-reveal {
+  animation: unlock 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes unlock {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+.nav-item svg {
+  transition: transform 0.2s ease;
+}
+.nav-item[aria-current='page'] svg {
+  transform: translateY(-2px) scale(1.08);
+}
+
 /* Animations pause when the page is hidden or the user prefers less motion. */
 :root[data-reduce-motion='true'] *,
 :root[data-hidden='true'] * {

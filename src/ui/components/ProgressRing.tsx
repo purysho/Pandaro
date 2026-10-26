@@ -7,7 +7,16 @@ const C = 2 * Math.PI * R;
  * Circular progress that fills clockwise from 12 o'clock as the session elapses.
  * The arc is derived from the current progress on every frame, so it never drifts.
  */
-export function ProgressRing({ progress, children }: { progress: number; children?: ReactNode }) {
+export function ProgressRing({
+  progress,
+  bloom = null,
+  children,
+}: {
+  progress: number;
+  /** Changes to a new value to play a short glow around the ring (e.g. on completion). */
+  bloom?: number | null;
+  children?: ReactNode;
+}) {
   const p = Math.min(1, Math.max(0, progress));
   return (
     <div className="relative aspect-square w-full">
@@ -52,6 +61,18 @@ export function ProgressRing({ progress, children }: { progress: number; childre
           strokeDashoffset={C * (1 - p)}
           opacity={p === 0 ? 0 : 1}
         />
+        {bloom !== null && (
+          <circle
+            key={bloom}
+            className="ring-bloom"
+            cx={50}
+            cy={50}
+            r={R}
+            fill="none"
+            stroke="var(--accent)"
+            strokeWidth={4}
+          />
+        )}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">{children}</div>
     </div>

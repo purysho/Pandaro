@@ -25,10 +25,12 @@ export function Eyes({ mode }: { mode: 'open' | 'down' | 'closed' | 'sleepy' | '
     <g className={mode === 'open' ? 'panda-eyes' : undefined}>
       <circle cx={82} cy={79} r={5} fill={FUR} />
       <circle cx={118} cy={79} r={5} fill={FUR} />
-      <circle cx={82.6} cy={79.6 + dy} r={2.8} fill="var(--ink)" />
-      <circle cx={118.6} cy={79.6 + dy} r={2.8} fill="var(--ink)" />
-      <circle cx={83.6} cy={78 + dy} r={0.9} fill={FUR} />
-      <circle cx={119.6} cy={78 + dy} r={0.9} fill={FUR} />
+      <g className={mode === 'open' ? 'panda-pupils' : undefined}>
+        <circle cx={82.6} cy={79.6 + dy} r={2.8} fill="var(--ink)" />
+        <circle cx={118.6} cy={79.6 + dy} r={2.8} fill="var(--ink)" />
+        <circle cx={83.6} cy={78 + dy} r={0.9} fill={FUR} />
+        <circle cx={119.6} cy={78 + dy} r={0.9} fill={FUR} />
+      </g>
       {mode === 'sleepy' && (
         <g fill={PATCH}>
           <rect x={75} y={72} width={14} height={7} rx={2} />
@@ -68,8 +70,8 @@ export function Head({
 }) {
   return (
     <g>
-      <circle cx={60} cy={44} r={17} fill={PATCH} />
-      <circle cx={140} cy={44} r={17} fill={PATCH} />
+      <circle className="panda-ear" cx={60} cy={44} r={17} fill={PATCH} />
+      <circle className="panda-ear" cx={140} cy={44} r={17} fill={PATCH} />
       <circle cx={61} cy={46} r={8} fill="var(--fur-shade)" opacity={0.25} />
       <circle cx={139} cy={46} r={8} fill="var(--fur-shade)" opacity={0.25} />
       <ellipse cx={100} cy={80} rx={52} ry={45} fill={FUR} />

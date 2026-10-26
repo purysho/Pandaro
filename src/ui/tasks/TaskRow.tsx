@@ -56,7 +56,7 @@ export function TaskRow({
         if (id) move(id, index, ordered);
       }}
       data-active={active || undefined}
-      className={`group flex items-start gap-3 rounded-2xl border-[1.5px] bg-surface px-3 py-2.5 transition-colors ${
+      className={`row-enter group flex items-start gap-3 rounded-2xl border-[1.5px] bg-surface px-3 py-2.5 transition-colors ${
         active ? 'border-accent' : dragOver ? 'border-ink' : 'border-transparent'
       }`}
       style={active ? { background: 'var(--accent-soft)' } : undefined}
@@ -74,7 +74,7 @@ export function TaskRow({
           color: 'var(--on-accent)',
         }}
       >
-        {task.done && <Icon name="check" size={16} />}
+        {task.done && <Icon name="check" size={16} className="check-draw" />}
       </button>
 
       <div className="min-w-0 flex-1 pt-0.5">

@@ -63,7 +63,9 @@ export function GardenPanel() {
                   }}
                 >
                   {unlocked ? (
-                    <Icon name="check" size={16} />
+                    <span className="unlock-reveal grid place-items-center">
+                      <Icon name="check" size={16} className="check-draw" />
+                    </span>
                   ) : (
                     <span className="text-xs text-muted tabular">{u.at}</span>
                   )}

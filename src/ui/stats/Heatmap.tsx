@@ -29,6 +29,8 @@ export function Heatmap({ days, active28 }: { days: DaySummary[]; active28: numb
           {days.map((d, i) => (
             <rect
               key={d.date}
+              className="cell-fade"
+              style={{ animationDelay: `${Math.floor(i / 7) * 25}ms` }}
               x={Math.floor(i / 7) * (cell + gap)}
               y={(i % 7) * (cell + gap)}
               width={cell}

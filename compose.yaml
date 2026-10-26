@@ -1,0 +1,26 @@
+name: pandaro
+
+services:
+  pandaro:
+    build:
+      context: .
+      args:
+        PANDARO_BASE: ${PANDARO_BASE:-/}
+    image: pandaro:latest
+    container_name: pandaro
+    ports:
+      - '${PANDARO_BIND:-0.0.0.0}:${PANDARO_PORT:-8080}:8080'
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/healthz']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

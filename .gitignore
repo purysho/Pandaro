@@ -1,0 +1,32 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+.DS_Store
+.env
+.env.local
+*.log
+
+# Android
+android/.gradle/
+android/**/build/
+android/local.properties
+android/keystore.properties
+android/app/release/
+*.jks
+*.keystore
+android/app/src/main/assets/public/
+android/capacitor-cordova-android-plugins/
+
+# iOS
+ios/App/build/
+ios/DerivedData/
+ios/App/App/public/
+ios/App/output/
+xcuserdata/
+*.xcuserstate
+*.p12
+*.mobileprovision
+.scratch/

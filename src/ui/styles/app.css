@@ -1,0 +1,451 @@
+@import 'tailwindcss';
+@import '@fontsource/zen-maru-gothic/latin-500.css';
+@import '@fontsource/zen-maru-gothic/latin-700.css';
+@import '@fontsource/atkinson-hyperlegible-next/latin-400.css';
+@import '@fontsource/atkinson-hyperlegible-next/latin-600.css';
+@import '@fontsource/atkinson-hyperlegible-next/latin-700.css';
+
+/*
+ * Pandaro design tokens.
+ * Layout: a calm paper-like ground; the timer card is the one raised object on the page.
+ * Accent hue follows the session: forest (focus), clay (short break), dusk blue (long break).
+ * Every essential text/background pair is checked for WCAG contrast in tests/unit/tokens.test.ts.
+ */
+:root {
+  --paper: #f7f3ea;
+  --surface: #fffdf8;
+  --surface-2: #efe9dc;
+  --line: #ddd5c4;
+  --ink: #24231f;
+  --ink-muted: #5e5a50;
+  --focus: #2f5d46;
+  --focus-soft: #dce8df;
+  --short: #a0582f;
+  --short-soft: #f3e2d6;
+  --long: #3f6a93;
+  --long-soft: #dde7f1;
+  --on-accent: #ffffff;
+  --bamboo: #7fa65a;
+  --bamboo-deep: #4f7a35;
+  --danger: #a23b2e;
+  --fur: #fffdf8;
+  --fur-shade: #ebe5d8;
+  --patch: #23221f;
+  --patch-edge: transparent;
+  --blush: #e9a6a0;
+  --shadow: 0 1px 2px rgb(36 35 31 / 0.06), 0 8px 24px rgb(36 35 31 / 0.07);
+
+  --accent: var(--focus);
+  --accent-soft: var(--focus-soft);
+
+  --font-display:
+    'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --font-body: 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --radius-card: 1.5rem;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --paper: #161816;
+  --surface: #1f221f;
+  --surface-2: #2a2e29;
+  --line: #3a3f38;
+  --ink: #ede7d9;
+  --ink-muted: #b0ab9b;
+  --focus: #8db36a;
+  --focus-soft: #2a3826;
+  --short: #e0a27a;
+  --short-soft: #3a2c22;
+  --long: #94b8dd;
+  --long-soft: #232f3b;
+  --on-accent: #12140f;
+  --bamboo: #7aa356;
+  --bamboo-deep: #a7c98a;
+  --danger: #f08b7d;
+  --fur: #ece6d8;
+  --fur-shade: #cfc8b8;
+  --patch: #0e0f0d;
+  --patch-edge: #6b7166;
+  --blush: #d08f88;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px rgb(0 0 0 / 0.35);
+  color-scheme: dark;
+}
+
+[data-kind='short'] {
+  --accent: var(--short);
+  --accent-soft: var(--short-soft);
+}
+[data-kind='long'] {
+  --accent: var(--long);
+  --accent-soft: var(--long-soft);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--ink-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-focus: var(--focus);
+  --color-short: var(--short);
+  --color-long: var(--long);
+  --color-bamboo: var(--bamboo);
+  --color-danger: var(--danger);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 100%;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  transition:
+    background-color 0.15s,
+    color 0.15s,
+    border-color 0.15s,
+    transform 0.1s;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.btn-ghost {
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+}
+.btn-ghost:hover {
+  border-color: var(--ink-muted);
+}
+.btn-danger {
+  background: var(--danger);
+  color: var(--paper);
+}
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  color: var(--ink-muted);
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+.icon-btn:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.field {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+.field::placeholder {
+  color: var(--ink-muted);
+}
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.25rem;
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+  border: 1.5px solid transparent;
+}
+.chip[aria-pressed='true'],
+.chip[aria-checked='true'],
+.chip[aria-selected='true'] {
+  color: var(--ink);
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+/* Timer ring */
+.ring-progress {
+  transition:
+    stroke-dashoffset 0.25s linear,
+    stroke 0.4s;
+}
+
+/*
+ * Panda animation: transforms and opacity only. `transform-box` is set on the animated groups
+ * only; applying it to every shape would move the pivot of SVG rotate(angle cx cy) attributes.
+ */
+.panda-eyes,
+.panda-breathe,
+.panda-page,
+.panda-wave,
+.panda-hop,
+.panda-leaf,
+.panda-sprout {
+  transform-box: fill-box;
+}
+.panda [fill='var(--patch)'] {
+  stroke: var(--patch-edge);
+  stroke-width: 1.6;
+  paint-order: stroke;
+}
+.panda-eyes {
+  transform-origin: center;
+  animation: blink 6.5s infinite;
+}
+.panda-breathe {
+  transform-origin: 50% 100%;
+  animation: breathe 5s ease-in-out infinite;
+}
+.panda-page {
+  transform-origin: 0% 50%;
+  animation: page-turn 40s ease-in-out infinite;
+}
+.panda-steam path {
+  animation: steam 3.2s ease-in-out infinite;
+}
+.panda-steam path:nth-child(2) {
+  animation-delay: 1.1s;
+}
+.panda-wave {
+  transform-origin: 80% 90%;
+  animation: wave 0.5s ease-in-out 3;
+}
+.panda-hop {
+  animation: hop 0.6s ease-out 2;
+}
+.panda-leaf {
+  animation: leaf-fall 1.6s ease-in forwards;
+  opacity: 0;
+}
+.panda-leaf:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.panda-leaf:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.panda-sprout {
+  transform-origin: 50% 100%;
+  animation: sprout 1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.bubble-in {
+  animation: bubble 0.3s ease-out both;
+}
+.fade-in {
+  animation: fade 0.25s ease-out both;
+}
+
+@keyframes blink {
+  0%,
+  95%,
+  100% {
+    transform: scaleY(1);
+  }
+  97% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(0.6px) scaleY(0.99);
+  }
+}
+@keyframes page-turn {
+  0%,
+  96%,
+  100% {
+    transform: scaleX(1);
+  }
+  98% {
+    transform: scaleX(-0.2);
+  }
+}
+@keyframes steam {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  40% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+@keyframes wave {
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+@keyframes hop {
+  40% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes leaf-fall {
+  0% {
+    opacity: 0;
+    transform: translate(0, -20px) rotate(0deg);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(12px, 60px) rotate(140deg);
+  }
+}
+@keyframes sprout {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes bubble {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animations pause when the page is hidden or the user prefers less motion. */
+:root[data-reduce-motion='true'] *,
+:root[data-hidden='true'] * {
+  animation: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+:root[data-reduce-motion='true'] .panda-leaf,
+:root[data-hidden='true'] .panda-leaf {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .panda-leaf {
+    opacity: 0;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+dialog {
+  color: var(--ink);
+}
+dialog::backdrop {
+  background: rgb(20 20 18 / 0.45);
+}

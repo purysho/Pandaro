@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" width="1024" height="500"><rect width="1024" height="500" fill="#2F5D46"/>
+     <path d="M0 430 Q256 400 512 430 T1024 430 V500 H0 Z" fill="#244A37"/>
+     <g fill="#A7C98A"><rect x="952" y="110" width="14" height="330" rx="7"/><rect x="986" y="190" width="14" height="250" rx="7"/><path d="M966 170 q30 -22 52 -8 q-24 18 -52 8z"/></g>
+     <g transform="translate(70 70) scale(0.34)">
+  <g transform="translate(512 512) scale(1) translate(-512 -512)">
+    <path d="M512 92 A420 420 0 1 1 148.3 302.0" fill="none" stroke="#A7C98A" stroke-width="44" stroke-linecap="round"/>
+    <circle cx="322" cy="352" r="96" fill="#1F1E1B"/>
+    <circle cx="702" cy="352" r="96" fill="#1F1E1B"/>
+    <ellipse cx="512" cy="560" rx="290" ry="255" fill="#FFFDF8"/>
+    <ellipse cx="420" cy="548" rx="66" ry="88" transform="rotate(28 420 548)" fill="#1F1E1B"/>
+    <ellipse cx="604" cy="548" rx="66" ry="88" transform="rotate(-28 604 548)" fill="#1F1E1B"/>
+    <circle cx="426" cy="542" r="24" fill="#FFFDF8"/>
+    <circle cx="598" cy="542" r="24" fill="#FFFDF8"/>
+    <circle cx="431" cy="547" r="13" fill="#1F1E1B"/>
+    <circle cx="603" cy="547" r="13" fill="#1F1E1B"/>
+    <ellipse cx="512" cy="642" rx="34" ry="25" fill="#1F1E1B"/>
+    <path d="M478 682 Q495 700 512 682 Q529 700 546 682" fill="none" stroke="#1F1E1B" stroke-width="11" stroke-linecap="round"/>
+    <ellipse cx="350" cy="660" rx="38" ry="22" fill="#E9A6A0" opacity="0.5"/>
+    <ellipse cx="674" cy="660" rx="38" ry="22" fill="#E9A6A0" opacity="0.5"/>
+  </g></g>
+     <text x="450" y="230" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-weight="700" font-size="92" fill="#F7F3EA">Pandaro</text>
+     <text x="454" y="300" font-family="Arial, sans-serif" font-size="38" fill="#A7C98A">Stay focused. Stay panda.</text></svg>

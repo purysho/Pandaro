@@ -1,0 +1,12 @@
+dist
+coverage
+node_modules
+android
+ios
+playwright-report
+test-results
+package-lock.json
+public/icons
+docs/store/screenshots
+.scratch
+dev-dist

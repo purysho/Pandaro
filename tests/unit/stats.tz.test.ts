@@ -54,6 +54,7 @@ function task(id: string, doneAt: number | null): Task {
     done: doneAt !== null,
     doneAt,
     createdAt: 0,
+    updatedAt: 0,
     order: 1,
   };
 }

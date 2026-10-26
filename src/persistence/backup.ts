@@ -7,11 +7,17 @@ import {
   BACKUP_VERSION,
   backupSchema,
   type Backup,
+  type LedgerEntry,
   type Settings,
 } from './schema';
 
 export function buildBackup(
-  data: { settings: Settings; tasks: readonly Task[]; sessions: readonly SessionRecord[] },
+  data: {
+    settings: Settings;
+    tasks: readonly Task[];
+    sessions: readonly SessionRecord[];
+    ledger?: readonly LedgerEntry[];
+  },
   now: number,
   app = 'pandaro',
 ): Backup {
@@ -23,6 +29,7 @@ export function buildBackup(
     settings: data.settings,
     tasks: [...data.tasks],
     sessions: [...data.sessions],
+    ledger: [...(data.ledger ?? [])],
   };
 }
 

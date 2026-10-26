@@ -105,7 +105,7 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
             className="relative -mt-2 w-[46%] rounded-full"
             aria-label="Pat the panda"
           >
-            <Panda pose={panda.pose} />
+            <Panda pose={panda.pose} accessory={settings.accessory} />
             {panda.message && (
               <span
                 role="status"

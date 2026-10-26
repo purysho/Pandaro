@@ -1,3 +1,5 @@
+import type { AccessoryId } from '../../domain/rewards/rewards';
+import { Accessory } from './accessories';
 import type { ReactNode } from 'react';
 import { RaisedArms, RestingArms, WaveArms } from './arms';
 import { Body, Eyes, Head } from './parts';
@@ -12,9 +14,11 @@ export interface PandaProps {
   className?: string;
   /** Accessible description; the panda is decorative when omitted. */
   title?: string;
+  /** Cosmetic item bought in the garden. */
+  accessory?: AccessoryId | 'none';
 }
 
-export function Panda({ pose, size = '100%', className, title }: PandaProps) {
+export function Panda({ pose, size = '100%', className, title, accessory = 'none' }: PandaProps) {
   const labelled = title !== undefined;
   let arms: ReactNode;
   let eyes: Parameters<typeof Eyes>[0]['mode'] = 'open';
@@ -83,6 +87,7 @@ export function Panda({ pose, size = '100%', className, title }: PandaProps) {
         <g className={wrapperClass}>
           <Body />
           <Head eyes={eyes} mouthOpen={mouthOpen} />
+          <Accessory id={accessory} />
           {arms}
         </g>
       </g>

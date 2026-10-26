@@ -4,6 +4,7 @@ import { removeAll } from '../persistence/storage';
 import { saveTextFile } from '../platform/files';
 import { useHistory } from './historyStore';
 import { repo } from './repo';
+import { useRewards } from './rewardStore';
 import { useSettings } from './settingsStore';
 import { useTasks } from './taskStore';
 import { useTimer } from './timerStore';
@@ -14,6 +15,7 @@ export function currentBackup(now = Date.now()): Backup {
       settings: useSettings.getState().settings,
       tasks: useTasks.getState().tasks,
       sessions: useHistory.getState().sessions,
+      ledger: useRewards.getState().ledger,
     },
     now,
     `pandaro ${__APP_VERSION__}`,
@@ -29,6 +31,7 @@ async function reloadFromRepo(): Promise<void> {
   const loaded = await repo().load();
   useHistory.getState().replace(loaded.sessions);
   useTasks.getState().replace(loaded.tasks);
+  useRewards.getState().replace(loaded.ledger);
 }
 
 /**
@@ -40,14 +43,20 @@ export async function importData(
   mode: 'merge' | 'replace',
 ): Promise<() => Promise<void>> {
   const before = currentBackup();
-  await repo().writeAll({ tasks: backup.tasks, sessions: backup.sessions }, mode);
+  await repo().writeAll(
+    { tasks: backup.tasks, sessions: backup.sessions, ledger: backup.ledger ?? [] },
+    mode,
+  );
   if (mode === 'replace') {
     useSettings.getState().replace(backup.settings);
     useTimer.getState().applySettings();
   }
   await reloadFromRepo();
   return async () => {
-    await repo().writeAll({ tasks: before.tasks, sessions: before.sessions }, 'replace');
+    await repo().writeAll(
+      { tasks: before.tasks, sessions: before.sessions, ledger: before.ledger ?? [] },
+      'replace',
+    );
     useSettings.getState().replace(before.settings);
     useTimer.getState().applySettings();
     await reloadFromRepo();

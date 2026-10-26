@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { openDB } from 'idb';
+import { openRepository } from '../../src/persistence/db';
 import { startEngine } from '../../src/state/engine';
 import { useHistory } from '../../src/state/historyStore';
 import { useSettings } from '../../src/state/settingsStore';
@@ -18,16 +19,8 @@ beforeEach(async () => {
   useHistory.setState({ sessions: [] });
   useTasks.setState({ tasks: [] });
   // Start from an empty database.
-  const db = await openDB('pandaro', 1, {
-    upgrade(d) {
-      const s = d.createObjectStore('sessions', { keyPath: 'id' });
-      s.createIndex('endedAt', 'endedAt');
-      d.createObjectStore('tasks', { keyPath: 'id' });
-      d.createObjectStore('kv');
-    },
-  });
-  await Promise.all([db.clear('sessions'), db.clear('tasks'), db.clear('kv')]);
-  db.close();
+  const repo = await openRepository();
+  await repo.clear();
 });
 
 afterEach(() => {
@@ -104,7 +97,7 @@ describe('engine start-up', () => {
 
   it('ignores a corrupt timer snapshot and quarantines damaged records', async () => {
     localStorage.setItem('pandaro.timer.v1', '{"v":1,"status":"running"');
-    const db = await openDB('pandaro', 1);
+    const db = await openDB('pandaro', 2);
     await db.put('sessions', { id: 'broken', kind: 'focus' });
     db.close();
     stop = await startEngine();

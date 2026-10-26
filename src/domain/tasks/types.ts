@@ -10,6 +10,8 @@ export interface Task {
   /** Epoch ms when the task was last marked done; null when open. */
   doneAt: number | null;
   createdAt: number;
+  /** Epoch ms of the last change; newer wins when syncing or merging. */
+  updatedAt: number;
   /** Sort rank; lower comes first. */
   order: number;
 }

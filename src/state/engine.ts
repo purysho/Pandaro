@@ -4,6 +4,7 @@ import { KEYS, storageAvailable } from '../persistence/storage';
 import { ClockWatch } from '../platform/clock';
 import { keepAwake, setNativeChrome, watchLifecycle } from '../platform';
 import { useHistory } from './historyStore';
+import { useRewards } from './rewardStore';
 import { setRepo } from './repo';
 import { resolvedTheme, useSettings } from './settingsStore';
 import { useTasks } from './taskStore';
@@ -34,9 +35,16 @@ export async function startEngine(): Promise<() => void> {
   setRepo(repository);
   if (!repository.persistent || !storageAvailable()) useUi.getState().setStorageWarning(true);
 
-  const loaded = await repository.load().catch(() => ({ sessions: [], tasks: [], quarantined: 0 }));
+  const loaded = await repository.load().catch(() => ({
+    sessions: [],
+    tasks: [],
+    ledger: [],
+    tombstones: [],
+    quarantined: 0,
+  }));
   useHistory.getState().replace(loaded.sessions);
   useTasks.getState().replace(loaded.tasks);
+  useRewards.getState().replace(loaded.ledger);
   if (loaded.quarantined > 0) {
     useUi
       .getState()
@@ -52,6 +60,7 @@ export async function startEngine(): Promise<() => void> {
   }
   useTimer.getState().applySettings();
   useTimer.getState().tick();
+  void useRewards.getState().grantToday(Date.now());
 
   const watch = new ClockWatch();
   const interval = window.setInterval(() => {

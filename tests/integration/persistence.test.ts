@@ -51,6 +51,7 @@ const task = (id: string, extra: Partial<Task> = {}): Task => ({
   done: false,
   doneAt: null,
   createdAt: T0,
+  updatedAt: T0,
   order: 1,
   ...extra,
 });
@@ -86,7 +87,7 @@ describe.each([
 
   it('merges without duplicating and keeps newer tasks', async () => {
     await repo.addSession(session('a'));
-    await repo.putTasks([task('1', { createdAt: T0 + 10, title: 'Local newer' })]);
+    await repo.putTasks([task('1', { updatedAt: T0 + 10, title: 'Local newer' })]);
     await repo.writeAll(
       { sessions: [session('a', { actualMs: 1 }), session('b')], tasks: [task('1'), task('2')] },
       'merge',
@@ -103,7 +104,13 @@ describe.each([
     await repo.writeAll({ sessions: [session('z')], tasks: [] }, 'replace');
     expect((await repo.load()).sessions.map((s) => s.id)).toEqual(['z']);
     await repo.clear();
-    expect(await repo.load()).toEqual({ sessions: [], tasks: [], quarantined: 0 });
+    expect(await repo.load()).toEqual({
+      sessions: [],
+      tasks: [],
+      ledger: [],
+      tombstones: [],
+      quarantined: 0,
+    });
   });
 });
 
@@ -111,7 +118,7 @@ describe('indexeddb integrity', () => {
   it('quarantines malformed rows instead of failing', async () => {
     const { repo, name } = await freshRepo();
     await repo.addSession(session('good'));
-    const raw = await openDB(name, 1);
+    const raw = await openDB(name, 2);
     await raw.put('sessions', { id: 'bad', kind: 'nap', outcome: 'completed' });
     await raw.put('tasks', { id: 'bad-task', title: '' });
     raw.close();
@@ -257,5 +264,86 @@ describe('backup', () => {
       }
       expect(() => parseBackup(chars.join(''))).not.toThrow();
     }
+  });
+});
+
+describe('schema v2', () => {
+  it('migrates a v1 database: adds stores and fills task updatedAt', async () => {
+    const name = `pandaro-migrate-${++dbCounter}`;
+    const v1 = await openDB(name, 1, {
+      upgrade(d) {
+        const s = d.createObjectStore('sessions', { keyPath: 'id' });
+        s.createIndex('endedAt', 'endedAt');
+        d.createObjectStore('tasks', { keyPath: 'id' });
+        d.createObjectStore('kv');
+      },
+    });
+    const old = { ...task('legacy'), createdAt: T0 - 5 } as Record<string, unknown>;
+    delete old.updatedAt;
+    await v1.put('tasks', old);
+    await v1.put('sessions', session('s1'));
+    v1.close();
+    const repo = await openRepository(name);
+    const loaded = await repo.load();
+    expect(loaded.tasks[0]?.updatedAt).toBe(T0 - 5);
+    expect(loaded.sessions).toHaveLength(1);
+    expect(loaded.ledger).toEqual([]);
+  });
+
+  describe.each([
+    ['indexeddb', async () => (await freshRepo()).repo],
+    ['memory', async () => memoryRepository()],
+  ])('%s ledger and tombstones', (_label, make) => {
+    it('records ledger entries once', async () => {
+      const repo = await make();
+      const grant = {
+        kind: 'grant' as const,
+        id: 'daily-2026-10-26',
+        amount: 1,
+        reason: 'daily' as const,
+        date: '2026-10-26',
+        at: T0,
+      };
+      expect(await repo.addLedger(grant)).toBe(true);
+      expect(await repo.addLedger(grant)).toBe(false);
+      expect((await repo.load()).ledger).toEqual([grant]);
+    });
+
+    it('keeps a tombstone that is newer than an incoming task, and loses to a newer edit', async () => {
+      const repo = await make();
+      await repo.putTasks([task('a')]);
+      await repo.deleteTasks(['a'], T0 + 100);
+      await repo.writeAll({ sessions: [], tasks: [task('a', { updatedAt: T0 + 50 })] }, 'merge');
+      expect((await repo.load()).tasks).toEqual([]);
+      await repo.writeAll({ sessions: [], tasks: [task('a', { updatedAt: T0 + 200 })] }, 'merge');
+      expect((await repo.load()).tasks.map((t) => t.id)).toEqual(['a']);
+      await repo.writeAll(
+        { sessions: [], tasks: [], tombstones: [{ id: 'a', deletedAt: T0 + 150 }] },
+        'merge',
+      );
+      expect((await repo.load()).tasks).toHaveLength(1);
+      await repo.writeAll(
+        { sessions: [], tasks: [], tombstones: [{ id: 'a', deletedAt: T0 + 300 }] },
+        'merge',
+      );
+      const after = await repo.load();
+      expect(after.tasks).toEqual([]);
+      expect(after.tombstones).toEqual([{ id: 'a', deletedAt: T0 + 300 }]);
+    });
+  });
+
+  it('imports a 1.0 backup whose tasks have no updatedAt', () => {
+    const v1 = JSON.parse(
+      serializeBackup(
+        buildBackup({ settings: DEFAULT_SETTINGS, tasks: [task('1')], sessions: [] }, T0),
+      ),
+    );
+    delete v1.tasks[0].updatedAt;
+    delete v1.settings.rewardStyle;
+    delete v1.settings.commitment;
+    delete v1.settings.accessory;
+    const parsed = parseBackup(JSON.stringify(v1));
+    expect(parsed.ok && parsed.backup.tasks[0]?.updatedAt).toBe(T0);
+    expect(parsed.ok && parsed.backup.settings.rewardStyle).toBe('daily');
   });
 });

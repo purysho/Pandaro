@@ -61,6 +61,7 @@ export const useTasks = create<TaskState>((set, get) => ({
       done: false,
       doneAt: null,
       createdAt: now,
+      updatedAt: now,
       order: orderAtEnd(get().tasks),
     };
     set((s) => ({ tasks: [...s.tasks, task] }));
@@ -75,6 +76,7 @@ export const useTasks = create<TaskState>((set, get) => ({
     if (!title) return;
     const next: Task = {
       ...existing,
+      updatedAt: Date.now(),
       title,
       notes: patch.notes === undefined ? existing.notes : normalizeNotes(patch.notes),
       estimate:
@@ -87,8 +89,9 @@ export const useTasks = create<TaskState>((set, get) => ({
   setDone: (id, done, now) => {
     const existing = get().tasks.find((t) => t.id === id);
     if (!existing) return;
-    const next = setDone(existing, done, now);
-    if (next === existing) return;
+    const changed = setDone(existing, done, now);
+    if (changed === existing) return;
+    const next = { ...changed, updatedAt: now };
     set((s) => ({ tasks: s.tasks.map((t) => (t.id === id ? next : t)) }));
     persist([next]);
   },
@@ -105,7 +108,9 @@ export const useTasks = create<TaskState>((set, get) => ({
 
   restore: (tasks) => {
     const ids = new Set(get().tasks.map((t) => t.id));
-    const missing = tasks.filter((t) => !ids.has(t.id));
+    const at = Date.now();
+    // Restored tasks are newer than their deletion, so sync keeps them.
+    const missing = tasks.filter((t) => !ids.has(t.id)).map((t) => ({ ...t, updatedAt: at }));
     if (missing.length === 0) return;
     set((s) => ({ tasks: [...s.tasks, ...missing] }));
     persist(missing);
@@ -122,7 +127,8 @@ export const useTasks = create<TaskState>((set, get) => ({
   },
 
   move: (id, toIndex, ordered) => {
-    const changed = reorder(ordered, id, toIndex);
+    const at = Date.now();
+    const changed = reorder(ordered, id, toIndex).map((t) => ({ ...t, updatedAt: at }));
     if (changed.length === 0) return;
     const byId = new Map(changed.map((t) => [t.id, t]));
     set((s) => ({ tasks: s.tasks.map((t) => byId.get(t.id) ?? t) }));
@@ -132,7 +138,11 @@ export const useTasks = create<TaskState>((set, get) => ({
   creditPomodoro: (id) => {
     const existing = get().tasks.find((t) => t.id === id);
     if (!existing) return;
-    const next = { ...existing, completedPomodoros: existing.completedPomodoros + 1 };
+    const next = {
+      ...existing,
+      completedPomodoros: existing.completedPomodoros + 1,
+      updatedAt: Date.now(),
+    };
     set((s) => ({ tasks: s.tasks.map((t) => (t.id === id ? next : t)) }));
     persist([next]);
   },

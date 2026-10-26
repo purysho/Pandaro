@@ -1,3 +1,4 @@
+import { useRewards } from './rewardStore';
 import { useHistory } from './historyStore';
 import { repo } from './repo';
 import { useSettings } from './settingsStore';
@@ -56,6 +57,7 @@ export async function handleEffects(effects: TimerEffect[]): Promise<void> {
     if (record.kind === 'focus' && record.taskId) {
       useTasks.getState().creditPomodoro(record.taskId);
     }
+    if (record.kind === 'focus') void useRewards.getState().grantToday(Date.now());
     const nextMs = useTimer.getState().timer.plannedMs;
     const message = completionMessage(record, next, nextMs);
     useUi.getState().say(message.title);

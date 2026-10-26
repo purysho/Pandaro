@@ -26,6 +26,7 @@ const t = (id: string, order: number, extra: Partial<Task> = {}): Task => ({
   done: false,
   doneAt: null,
   createdAt: order,
+  updatedAt: order,
   order,
   ...extra,
 });

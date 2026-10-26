@@ -6,6 +6,7 @@ import { useSettings } from '../../state/settingsStore';
 import { Icon } from '../components/Icon';
 import { Panda } from '../panda/Panda';
 import { GardenScene } from './GardenScene';
+import { RewardsCard } from './RewardsCard';
 
 export function GardenPanel() {
   const sessions = useHistory((s) => s.sessions);
@@ -42,6 +43,8 @@ export function GardenPanel() {
         {garden.next &&
           ` Next unlock: ${garden.next.label} at ${garden.next.at} session${garden.next.at === 1 ? '' : 's'}.`}
       </p>
+
+      <RewardsCard />
 
       <div>
         <h3 className="text-lg font-bold">Milestones</h3>

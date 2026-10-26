@@ -137,7 +137,7 @@ Each entry records what was done, the files touched, the checks that actually ra
   - Wrote README, ARCHITECTURE, DEVELOPMENT, TESTING, DEPLOYMENT, ANDROID_RELEASE, IOS_RELEASE,
     PRIVACY, CHANGELOG, RELEASE_CHECKLIST and VERIFICATION.
   - Wrote the Google Play and App Store listings; character limits checked by script.
-  - Final artifacts built with checksums (see VERIFICATION.md). Tag `v1.0.0`.
+  - Final artifacts built with checksums (see VERIFICATION.md). Tag `v1.0.0` created locally on `4f8aed5`. Pushing it returned HTTP 403 from the session's Git proxy, and the REST API tag endpoint is also blocked. **BLOCKED:** run `git tag -a v1.0.0 4f8aed5 -m "Pandaro 1.0.0" && git push origin v1.0.0`.
 - **Final audit:** every requirement is classified in VERIFICATION.md. There are no INCOMPLETE
   items; the remaining items are device-only, BLOCKED or NOT VERIFIED, as listed below.
 
@@ -150,5 +150,6 @@ Each entry records what was done, the files touched, the checks that actually ra
 3. **iOS:** on a Mac with Xcode 26+, open `ios/App/App.xcodeproj`, choose a team, build and run
    the checklist, capture App Store screenshots, then TestFlight and submission.
 4. **Public URLs:** host PRIVACY.md and provide a support URL. Both stores require them.
-5. **Optional:** manual checks in Safari and Firefox, and a second deployment to see the update
+5. **Release tag:** push `v1.0.0` (see above); the environment could not.
+6. **Optional:** manual checks in Safari and Firefox, and a second deployment to see the update
    banner.

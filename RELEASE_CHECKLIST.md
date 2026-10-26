@@ -22,7 +22,7 @@ the build environment; unmarked items need you.
 
 ## 3. Publish
 
-- [ ] Tag the release: `git tag -a vX.Y.Z -m "Pandaro X.Y.Z" && git push --tags` (✓ 1.0.0)
+- [ ] Tag the release: `git tag -a vX.Y.Z -m "Pandaro X.Y.Z" && git push origin vX.Y.Z` (1.0.0: tag created on commit `4f8aed5`; pushing it was refused by the build environment's Git proxy, so push it yourself)
 - [ ] Web: deploy `dist/` or the Docker image ([DEPLOYMENT.md](DEPLOYMENT.md))
 - [ ] Privacy policy published at a public URL (required by both stores)
 - [ ] Android: sign the AAB with the upload key, upload to Internal testing, then promote ([docs/store/google-play.md](docs/store/google-play.md))

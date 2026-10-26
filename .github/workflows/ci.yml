@@ -65,3 +65,42 @@ jobs:
           curl -fsS http://localhost:8080/ | grep -q '<div id="root">'
           curl -fsSI http://localhost:8080/ | grep -qi 'content-security-policy'
           docker rm -f pandaro
+
+  api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: server
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pandaro
+          POSTGRES_PASSWORD: pandaro
+          POSTGRES_DB: pandaro_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U pandaro" --health-interval 2s --health-retries 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - name: Install Postgres client tools (backup tests)
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Tests (real Postgres)
+        run: npm test
+        env:
+          TEST_DATABASE_URL: postgres://pandaro:pandaro@localhost:5432/pandaro_test
+      - name: Build
+        run: npm run build
+      - name: Dependency audit (runtime)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Failover drill (2 API instances, Postgres primary + replica)
+        run: node scripts/failover-drill.mjs

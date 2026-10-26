@@ -12,3 +12,4 @@ docs/store/screenshots
 dev-dist
 THIRD_PARTY_NOTICES.md
 public/third-party-notices.txt
+server/dist

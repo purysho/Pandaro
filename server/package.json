@@ -1,0 +1,34 @@
+{
+  "name": "pandaro-server",
+  "private": true,
+  "version": "1.1.0",
+  "description": "Pandaro sync and accounts API (optional; the app works without it).",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/main.js",
+    "dev": "tsx watch src/main.ts",
+    "migrate": "node dist/db/migrateCli.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fastify/cors": "11.3.1",
+    "argon2": "0.45.1",
+    "fastify": "5.12.7",
+    "jose": "6.2.13",
+    "pg": "8.23.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/pg": "8.23.1",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  }
+}

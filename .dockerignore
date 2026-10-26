@@ -11,3 +11,4 @@ ios
 docs
 *.log
 .env
+server

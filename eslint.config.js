@@ -16,6 +16,7 @@ export default tseslint.config(
       'test-results',
       'dev-dist',
       '.scratch',
+      'server/dist',
     ],
   },
   js.configs.recommended,
@@ -47,6 +48,10 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    files: ['server/**/*.{ts,mjs}'],
+    languageOptions: { globals: { ...globals.node } },
   },
   {
     files: ['public/**/*.js'],

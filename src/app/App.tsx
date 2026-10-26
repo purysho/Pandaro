@@ -9,11 +9,11 @@ import { Onboarding } from '../ui/components/Onboarding';
 import { LiveRegion, Toasts } from '../ui/components/Toasts';
 import { useMediaQuery } from '../ui/hooks/useMediaQuery';
 import { SHORTCUTS, toggleTheme, useShortcuts } from '../ui/hooks/useShortcuts';
-import { GardenPanel } from '../ui/screens/GardenPanel';
-import { SettingsSheet } from '../ui/screens/SettingsSheet';
-import { StatsPanel } from '../ui/screens/StatsPanel';
-import { TasksPanel } from '../ui/screens/TasksPanel';
-import { TimerPanel } from '../ui/screens/TimerPanel';
+import { GardenPanel } from '../ui/garden/GardenPanel';
+import { SettingsSheet } from '../ui/settings/SettingsSheet';
+import { StatsPanel } from '../ui/stats/StatsPanel';
+import { TasksPanel } from '../ui/tasks/TasksPanel';
+import { TimerPanel } from '../ui/timer/TimerPanel';
 import { canInstall, onInstallChange, promptInstall } from './pwa';
 
 const NAV: { id: View; label: string; icon: IconName }[] = [

@@ -52,7 +52,8 @@ vi.mock('@capacitor/share', () => ({ Share: { share: vi.fn(async () => undefined
 const platform = await import('../../src/platform');
 const { nativeNotifications } = await import('../../src/platform/notifications/native');
 const { saveTextFile } = await import('../../src/platform/files');
-const { useTimer, syncNotification, setClock } = await import('../../src/state/timerStore');
+const { useTimer, setClock } = await import('../../src/state/timerStore');
+const { syncNotification } = await import('../../src/state/notificationSync');
 const { useSettings } = await import('../../src/state/settingsStore');
 const { useUi } = await import('../../src/state/uiStore');
 const { DEFAULT_SETTINGS } = await import('../../src/persistence/schema');

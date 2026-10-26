@@ -1,22 +1,15 @@
 import { create } from 'zustand';
+import { toTimerConfig, useSettings } from './settingsStore';
+import { useUi } from './uiStore';
 import * as M from '../domain/timer/machine';
-import type {
-  SessionKind,
-  SessionRecord,
-  TimerEffect,
-  TimerState,
-  TransitionResult,
-} from '../domain/timer/types';
+import type { SessionKind, TimerState, TransitionResult } from '../domain/timer/types';
 import { migrateTimer } from '../persistence/migrations';
 import { KEYS, readJSON, writeJSON } from '../persistence/storage';
+import { hapticTap } from '../platform';
 import { chime } from '../platform/audio/chime';
 import { systemClock, type Clock } from '../platform/clock';
-import { hapticTap, isNative, notifications } from '../platform';
-import { useHistory } from './historyStore';
-import { repo } from './repo';
-import { toTimerConfig, useSettings } from './settingsStore';
-import { useTasks } from './taskStore';
-import { useUi } from './uiStore';
+import { syncNotification } from './notificationSync';
+import { handleEffects } from './timerEffects';
 
 export const KIND_LABEL: Record<SessionKind, string> = {
   focus: 'Focus',
@@ -24,7 +17,7 @@ export const KIND_LABEL: Record<SessionKind, string> = {
   long: 'Long break',
 };
 
-interface TimerStore {
+export interface TimerStore {
   timer: TimerState;
   now: number;
   /** True while the page or app is in the foreground. */
@@ -48,6 +41,7 @@ interface TimerStore {
 }
 
 let clock: Clock = systemClock;
+
 export function setClock(next: Clock): void {
   clock = next;
 }
@@ -64,7 +58,7 @@ export function loadTimerSnapshot(): TimerState | null {
   return migrateTimer(readJSON(KEYS.timer));
 }
 
-function config() {
+export function config() {
   return toTimerConfig(useSettings.getState().settings);
 }
 
@@ -138,130 +132,5 @@ function onStateChange(prev: TimerState, next: TimerState): void {
     ) {
       useUi.getState().say(`${label} ready.`);
     }
-  }
-}
-
-function minutes(ms: number): number {
-  return Math.round(ms / 60_000);
-}
-
-export function completionMessage(
-  record: SessionRecord,
-  next: SessionKind,
-  nextMs: number,
-): { title: string; body: string } {
-  if (record.kind === 'focus') {
-    return next === 'long'
-      ? {
-          title: 'Cycle complete. Time for a long break',
-          body: `Four sessions done. Rest for ${minutes(nextMs)} minutes.`,
-        }
-      : next === 'short'
-        ? {
-            title: 'Focus complete. Take a short break',
-            body: `Stretch and breathe for ${minutes(nextMs)} minutes.`,
-          }
-        : { title: 'Focus complete', body: 'Nicely done. Ready for another?' };
-  }
-  return {
-    title: 'Break over. Ready to focus?',
-    body: `Your next focus session is ${minutes(nextMs)} minutes.`,
-  };
-}
-
-async function handleEffects(effects: TimerEffect[]): Promise<void> {
-  for (const effect of effects) {
-    let stored: boolean;
-    try {
-      stored = await repo().addSession(effect.record);
-    } catch {
-      stored = false;
-      useUi.getState().setStorageWarning(true);
-    }
-    // Only the writer that stored the record performs side effects, so duplicate events from
-    // a second tab or a late tick cannot double-count, double-chime or double-credit.
-    if (!stored) continue;
-    useHistory.getState().add(effect.record);
-    if (effect.type !== 'completed') continue;
-
-    const { record, next, away } = effect;
-    const settings = useSettings.getState().settings;
-    if (record.kind === 'focus' && record.taskId) {
-      useTasks.getState().creditPomodoro(record.taskId);
-    }
-    const nextMs = useTimer.getState().timer.plannedMs;
-    const message = completionMessage(record, next, nextMs);
-    useUi.getState().say(message.title);
-    if (!away) {
-      if (settings.sound) {
-        const variant =
-          record.kind === 'focus' || !settings.distinctBreakChime ? 'toBreak' : 'toFocus';
-        chime.play(variant, settings.volume / 100, record.id);
-      }
-      useUi
-        .getState()
-        .celebrate(
-          record.kind === 'focus' ? (next === 'long' ? 'cycle' : 'session') : 'break-over',
-        );
-      void hapticTap(true);
-    }
-    const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
-    if (!isNative && settings.notifications && hidden) {
-      void notifications().then((n) => n.show(message.title, message.body));
-    }
-  }
-}
-
-let syncChain: Promise<void> = Promise.resolve();
-let appliedNotification: string | null = null;
-
-/**
- * Native apps: keep exactly one notification scheduled for the running session while the app
- * is in the background, and none while it is in the foreground (the in-app chime covers that).
- * Calls are serialised and a state that is already applied is skipped, so bursts of state
- * changes never schedule twice.
- */
-export function syncNotification(): Promise<void> {
-  if (!isNative) return Promise.resolve();
-  syncChain = syncChain.then(applyNotification, applyNotification);
-  return syncChain;
-}
-
-async function applyNotification(): Promise<void> {
-  const port = await notifications();
-  const { timer, active } = useTimer.getState();
-  const settings = useSettings.getState().settings;
-  const wanted =
-    !active && settings.notifications && timer.status === 'running' && timer.deadline
-      ? `${timer.sessionId}@${timer.deadline}`
-      : 'none';
-  if (wanted === appliedNotification) return;
-  try {
-    if (wanted !== 'none' && timer.deadline) {
-      const cfg = config();
-      const completedInCycle =
-        timer.kind === 'focus' ? timer.completedInCycle + 1 : timer.completedInCycle;
-      const next = M.nextKindAfter(timer.kind, 'completed', completedInCycle, cfg);
-      const fake: SessionRecord = {
-        id: timer.sessionId,
-        kind: timer.kind,
-        outcome: 'completed',
-        plannedMs: timer.plannedMs,
-        actualMs: timer.plannedMs,
-        segments: [],
-        startedAt: timer.deadline,
-        endedAt: timer.deadline,
-        taskId: timer.taskId,
-        cycleIndex: timer.completedInCycle,
-      };
-      const msg = completionMessage(fake, next, M.durationFor(next, cfg));
-      await port.schedule({ key: timer.sessionId, at: timer.deadline, ...msg });
-    } else {
-      await port.cancelAll();
-    }
-    appliedNotification = wanted;
-  } catch {
-    // Scheduling failed (permission revoked); the app still completes sessions when reopened.
-    appliedNotification = null;
   }
 }

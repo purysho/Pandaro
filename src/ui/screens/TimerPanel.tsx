@@ -12,6 +12,7 @@ import { SessionDots } from '../components/SessionDots';
 import { formatClock, formatTime, spokenRemaining } from '../format';
 import { Panda, type PandaPose } from '../panda/Panda';
 import { TodayStrip } from './TodayStrip';
+import { NotifyPrompt } from '../components/NotifyPrompt';
 
 const KINDS: SessionKind[] = ['focus', 'short', 'long'];
 
@@ -277,6 +278,7 @@ export function TimerPanel({ compact = false }: { compact?: boolean }) {
         </div>
 
         {!(settings.focusMode && running) && <TodayStrip />}
+        {!running && <NotifyPrompt />}
       </div>
 
       <ConfirmDialog

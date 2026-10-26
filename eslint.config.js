@@ -53,7 +53,7 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.browser }, sourceType: 'script' },
   },
   {
-    files: ['scripts/**/*.mjs', '*.config.{js,ts}', 'tests/**/*.{ts,tsx}'],
+    files: ['scripts/**/*.mjs', 'docs/**/*.mjs', '*.config.{js,ts}', 'tests/**/*.{ts,tsx}'],
     // Scripts and tests also run code in the browser (Playwright evaluate callbacks).
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },

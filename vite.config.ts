@@ -100,7 +100,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2,webmanifest,txt}'],
         globIgnores: ['**/screenshot-*.png'],
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,

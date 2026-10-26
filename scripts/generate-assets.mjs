@@ -151,7 +151,14 @@ async function main() {
     500,
     C.forest,
   );
-  await png(SOURCES['icon.svg'], join(root, 'docs', 'store', 'icon-512.png'), 512);
+  // Google Play applies its own mask, so the store icon is full-bleed with no transparency.
+  await png(
+    SOURCES['icon-ios.svg'],
+    join(root, 'docs', 'store', 'icon-512.png'),
+    512,
+    512,
+    C.forest,
+  );
 
   await androidAssets();
   await iosAssets();

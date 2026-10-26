@@ -144,7 +144,8 @@ async function shot(name, contextOptions, fn) {
   console.log('captured', name);
 }
 
-const phone = { ...devices['Pixel 7'] };
+// Google Play requires screenshots no longer than 2:1, so the phone viewport is 412×824.
+const phone = { ...devices['Pixel 7'], viewport: { width: 412, height: 824 } };
 const iphone = {
   viewport: { width: 390, height: 844 },
   deviceScaleFactor: 3,

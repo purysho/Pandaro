@@ -1,6 +1,6 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/app/App';
 import { createInitialState } from '../../src/domain/timer/machine';
 import { memoryRepository } from '../../src/persistence/db';
@@ -254,4 +254,50 @@ describe('panda', () => {
       expect(container.querySelector(`[data-pose="${pose}"]`)).not.toBeNull();
     },
   );
+});
+
+describe('notification prompt', () => {
+  it('offers notifications once after the first completed session', async () => {
+    const user = userEvent.setup();
+    const requestPermission = vi.fn(async () => {
+      (globalThis.Notification as unknown as { permission: string }).permission = 'granted';
+      return 'granted';
+    });
+    const original = globalThis.Notification;
+    globalThis.Notification = Object.assign(function FakeNotification() {}, {
+      permission: 'default',
+      requestPermission,
+    }) as unknown as typeof Notification;
+    try {
+      useHistory.setState({
+        sessions: [
+          {
+            id: 'done-1',
+            kind: 'focus',
+            outcome: 'completed',
+            plannedMs: 25 * MIN,
+            actualMs: 25 * MIN,
+            segments: [{ start: wall - 30 * MIN, end: wall - 5 * MIN }],
+            startedAt: wall - 30 * MIN,
+            endedAt: wall - 5 * MIN,
+            taskId: null,
+            cycleIndex: 0,
+          },
+        ],
+      });
+      const { unmount } = render(<App />);
+      const region = await screen.findByRole('region', { name: 'Notifications' });
+      await user.click(within(region).getByRole('button', { name: 'Turn on' }));
+      expect(requestPermission).toHaveBeenCalled();
+      await vi.waitFor(() => expect(useSettings.getState().settings.notifications).toBe(true));
+      expect(screen.queryByRole('region', { name: 'Notifications' })).toBeNull();
+      unmount();
+      useSettings.getState().update({ notifications: false });
+      render(<App />);
+      await new Promise((r) => setTimeout(r, 20));
+      expect(screen.queryByRole('region', { name: 'Notifications' })).toBeNull();
+    } finally {
+      globalThis.Notification = original;
+    }
+  });
 });

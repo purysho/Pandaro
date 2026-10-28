@@ -60,7 +60,7 @@ These downloads appear after a `v*` tag is pushed and the release workflow finis
 | Web app and PWA     | Built, tested (unit, integration and end-to-end) and runs offline                                                  |
 | Docker self-hosting | Image built and smoke-tested; end-to-end suite passes against the container                                        |
 | Android             | Project builds an APK and AAB; lint is clean. **Not tested on a device or emulator.** Signing needs your keystore. |
-| iOS                 | Project generated and statically checked. **No iOS binary built** (requires macOS and Xcode).                      |
+| iOS                 | Simulator app bundle built by releases. **No signed iPhone binary** (requires Apple signing).                      |
 | App stores          | Listing material prepared in [docs/store](docs/store). Not submitted.                                              |
 
 The full list of checks and their evidence is in [VERIFICATION.md](VERIFICATION.md).

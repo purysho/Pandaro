@@ -31,6 +31,17 @@ async function go(page: Page) {
   await expect(page.getByRole('timer')).toBeVisible();
 }
 
+async function finishAnimations(page: Page) {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => undefined)),
+    ),
+  );
+}
+
 test.describe('Pandaro', () => {
   test('loads cleanly with no external requests and no errors', async ({ page }) => {
     const problems = trackProblems(page);
@@ -242,14 +253,7 @@ test.describe('Pandaro', () => {
       }
       await page.getByRole('button', { name: 'Settings' }).click();
       // Contrast is only meaningful once the dialog's fade-in has finished.
-      await page.evaluate(() =>
-        Promise.all(
-          document
-            .getAnimations()
-            .filter((a) => a.effect?.getTiming().iterations !== Infinity)
-            .map((a) => a.finished),
-        ),
-      );
+      await finishAnimations(page);
       const settings = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
       expect(
         settings.violations

@@ -67,7 +67,7 @@ jobs:
           docker rm -f pandaro
 
   api:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
       run:
@@ -89,8 +89,12 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: server/package-lock.json
-      - name: Install Postgres client tools (backup tests)
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Install Postgres 16 client tools (backup tests)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-16
+          pg_dump --version | grep -E ' 16\\.'
+          pg_restore --version | grep -E ' 16\\.'
       - run: npm ci
       - name: Type check
         run: npm run typecheck

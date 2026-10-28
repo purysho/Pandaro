@@ -32,14 +32,20 @@ async function go(page: Page) {
 }
 
 async function finishAnimations(page: Page) {
-  await page.evaluate(() =>
-    Promise.all(
-      document
-        .getAnimations()
-        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
-        .map((animation) => animation.finished.catch(() => undefined)),
-    ),
-  );
+  await page.evaluate(async () => {
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+    );
+    for (const animation of document.getAnimations()) {
+      if (animation.effect?.getTiming().iterations !== Infinity) {
+        try {
+          animation.finish();
+        } catch {
+          // Ignore animations that were cancelled during the screen change.
+        }
+      }
+    }
+  });
 }
 
 test.describe('Pandaro', () => {

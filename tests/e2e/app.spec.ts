@@ -228,7 +228,6 @@ test.describe('Pandaro', () => {
       await skipOnboarding(page);
       await page.emulateMedia({ colorScheme: theme });
       await go(page);
-      await page.addStyleTag({ content: '.view-enter { animation: none !important; }' });
       const views =
         (page.viewportSize()?.width ?? 0) >= 1024
           ? ['Tasks', 'Stats', 'Garden']

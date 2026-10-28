@@ -1,0 +1,140 @@
+name: Desktop and mobile releases
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package-desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: --win nsis zip
+            name: windows
+          - os: macos-latest
+            target: --mac dmg zip --universal
+            name: macos
+          - os: ubuntu-22.04
+            target: --linux AppImage zip
+            name: linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run desktop:build
+      - run: node scripts/generate-desktop-icon.mjs
+      - name: Package desktop app
+        run: npx electron-builder ${{ matrix.target }} --publish never
+      - name: Stage release files
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          case "${{ matrix.name }}" in
+            windows)
+              cp release/*.exe artifacts/Pandaro-Windows.exe
+              cp release/*.zip artifacts/Pandaro-Windows.zip
+              ;;
+            macos)
+              cp release/*.dmg artifacts/Pandaro-macOS.dmg
+              cp release/*.zip artifacts/Pandaro-macOS.zip
+              ;;
+            linux)
+              cp release/*.AppImage artifacts/Pandaro-Linux.AppImage
+              cp release/*.zip artifacts/Pandaro-Linux.zip
+              ;;
+          esac
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.name }}
+          path: artifacts/*
+          if-no-files-found: error
+          retention-days: 7
+
+  android:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+      - run: npm ci
+      - run: npm run cap:sync
+      - name: Build and lint Android
+        working-directory: android
+        run: ./gradlew --no-daemon lintRelease assembleDebug
+      - name: Stage release files
+        run: |
+          mkdir -p artifacts
+          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/Pandaro-Android.apk
+          cd artifacts
+          zip -j Pandaro-Android.zip Pandaro-Android.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-android
+          path: artifacts/*
+          if-no-files-found: error
+          retention-days: 7
+
+  ios-simulator:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run cap:sync
+      - name: Build iOS simulator app
+        run: >-
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphonesimulator
+          -configuration Release -derivedDataPath ios-build CODE_SIGNING_ALLOWED=NO
+      - name: Stage iOS simulator app and project archive
+        run: |
+          mkdir -p artifacts/ios-app
+          cp -R ios-build/Build/Products/Release-iphonesimulator/App.app artifacts/ios-app/
+          cd artifacts
+          zip -qr Pandaro-iOS-Simulator.zip ios-app/App.app
+          cd ..
+          git archive --format=zip --output=artifacts/Pandaro-iOS-Project.zip HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-ios
+          path: artifacts/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: [package-desktop, android, ios-simulator]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          generate_release_notes: true

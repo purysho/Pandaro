@@ -12,18 +12,6 @@ your data on your device.
   <img src="docs/store/screenshots/phone-garden-light.png" alt="Panda Garden" width="240" />
 </p>
 
-## Downloads
-
-<p>
-  <a href="https://github.com/purysho/Pandaro/archive/refs/heads/main.zip"><img alt="Windows — download source ZIP" src="https://img.shields.io/badge/Windows-Source%20ZIP-0078D4?logo=windows&logoColor=white" /></a>
-  <a href="https://github.com/purysho/Pandaro/archive/refs/heads/main.zip"><img alt="macOS — download source ZIP" src="https://img.shields.io/badge/macOS-Source%20ZIP-555555?logo=apple&logoColor=white" /></a>
-  <a href="https://github.com/purysho/Pandaro/archive/refs/heads/main.zip"><img alt="Linux — download source ZIP" src="https://img.shields.io/badge/Linux-Source%20ZIP-FCC624?logo=linux&logoColor=black" /></a>
-  <a href="https://github.com/purysho/Pandaro/blob/main/ANDROID_RELEASE.md"><img alt="Android — build and install guide" src="https://img.shields.io/badge/Android-Build%20guide-3DDC84?logo=android&logoColor=white" /></a>
-  <a href="https://github.com/purysho/Pandaro/blob/main/IOS_RELEASE.md"><img alt="iOS — build and install guide" src="https://img.shields.io/badge/iOS-Build%20guide-111111?logo=apple&logoColor=white" /></a>
-</p>
-
-Desktop ZIPs contain the project source, not ready-to-run installers. Android and iOS builds currently require the steps in their guides; no packaged binaries have been published yet.
-
 ## Features
 
 - **Reliable timer.** Focus, short break and long break are configurable from 1 to 120 minutes.
@@ -50,6 +38,22 @@ Desktop ZIPs contain the project source, not ready-to-run installers. Android an
   (Capacitor).
 
 ## Release status
+
+The tagged release workflow publishes two downloads for each supported platform. Installers and
+portable ZIPs are unsigned. On Windows, SmartScreen may show a prompt; on macOS, open the app from
+Finder the first time.
+
+| Platform | Installer / app                                                                                            | ZIP archive                                                                                                  |
+| -------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Windows  | [`.exe`](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-Windows.exe)                  | [`.zip`](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-Windows.zip)                    |
+| macOS    | [`.dmg`](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-macOS.dmg)                    | [`.zip`](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-macOS.zip)                      |
+| Linux    | [`.AppImage`](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-Linux.AppImage)          | [`.zip`](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-Linux.zip)                      |
+| Android  | [`.apk`](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-Android.apk)                  | [`.zip` containing the APK](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-Android.zip) |
+| iOS      | [Simulator app ZIP](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-iOS-Simulator.zip) | [iOS project ZIP](https://github.com/purysho/Pandaro/releases/latest/download/Pandaro-iOS-Project.zip)       |
+
+The iOS simulator build runs in Xcode’s simulator and cannot be installed on a physical iPhone.
+A signed iPhone app requires Apple signing and distribution; see the [iOS build guide](IOS_RELEASE.md).
+These downloads appear after a `v*` tag is pushed and the release workflow finishes.
 
 | Target              | Status                                                                                                             |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -113,6 +117,19 @@ npx cap open ios                 # on macOS with Xcode 26+
 ```
 
 Release steps: [ANDROID_RELEASE.md](ANDROID_RELEASE.md) and [IOS_RELEASE.md](IOS_RELEASE.md).
+
+## Desktop apps
+
+To package Pandaro locally, install the root dependencies and run:
+
+```bash
+npm ci
+npm run desktop:dist
+```
+
+The installer for your current operating system is written to `release/`. Official release
+downloads are unsigned; Windows may show a SmartScreen prompt and macOS may require opening the
+app from Finder the first time.
 
 ## Keyboard shortcuts
 

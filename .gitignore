@@ -1,10 +1,12 @@
 node_modules/
 dist/
+release/
 coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
 .DS_Store
+assets/pandaro.ico
 .env
 .env.local
 *.log

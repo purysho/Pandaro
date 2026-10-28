@@ -12,6 +12,18 @@ your data on your device.
   <img src="docs/store/screenshots/phone-garden-light.png" alt="Panda Garden" width="240" />
 </p>
 
+## Downloads
+
+<p>
+  <a href="https://github.com/purysho/Pandaro/archive/refs/heads/main.zip"><img alt="Windows — download source ZIP" src="https://img.shields.io/badge/Windows-Source%20ZIP-0078D4?logo=windows&logoColor=white" /></a>
+  <a href="https://github.com/purysho/Pandaro/archive/refs/heads/main.zip"><img alt="macOS — download source ZIP" src="https://img.shields.io/badge/macOS-Source%20ZIP-555555?logo=apple&logoColor=white" /></a>
+  <a href="https://github.com/purysho/Pandaro/archive/refs/heads/main.zip"><img alt="Linux — download source ZIP" src="https://img.shields.io/badge/Linux-Source%20ZIP-FCC624?logo=linux&logoColor=black" /></a>
+  <a href="https://github.com/purysho/Pandaro/blob/main/ANDROID_RELEASE.md"><img alt="Android — build and install guide" src="https://img.shields.io/badge/Android-Build%20guide-3DDC84?logo=android&logoColor=white" /></a>
+  <a href="https://github.com/purysho/Pandaro/blob/main/IOS_RELEASE.md"><img alt="iOS — build and install guide" src="https://img.shields.io/badge/iOS-Build%20guide-111111?logo=apple&logoColor=white" /></a>
+</p>
+
+Desktop ZIPs contain the project source, not ready-to-run installers. Android and iOS builds currently require the steps in their guides; no packaged binaries have been published yet.
+
 ## Features
 
 - **Reliable timer.** Focus, short break and long break are configurable from 1 to 120 minutes.
